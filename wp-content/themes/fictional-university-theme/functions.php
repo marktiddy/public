@@ -26,6 +26,14 @@ function university_features() {
   register_nav_menu('footerRightMenuLocation','Footer Menu Right');
 
   add_theme_support('title-tag');
+  add_theme_support('post-thumbnails');
+  //Support for multiple image sizes
+  //Add some arguments. Nickname, pixels wide, pixels tall, to crop or not
+  //Cropiing takes an array to specify how to crop e.g. array('left','top')
+  //Alternatively you might enable the manual image crop plugin by tomasz
+  add_image_size('professorLandscape',400,260,true);
+  add_image_size('professorPortrait',480,650,true);
+  add_image_size('pageBanner',1500,350,true);
 
 }
 
@@ -34,6 +42,13 @@ add_action('after_setup_theme','university_features');
 
 //Action to order our events page
 function university_adjust_queries($query) {
+//Order our programs
+if (!is_admin() AND is_post_type_archive('program') AND $query->is_main_query()) {
+    $query->set('orderby','title');
+    $query->set('order','ASC');
+    $query->set('posts_per_page',-1);
+}
+
   if (!is_admin() AND is_post_type_archive('event') AND $query->is_main_query()) {
    //We're going to sort by event date and remove the past
    //This is simular to custom query code
@@ -49,6 +64,6 @@ function university_adjust_queries($query) {
 ,              )));
 
 
-  }
+  }  
 }
 add_action('pre_get_posts','university_adjust_queries');
