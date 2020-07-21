@@ -1,5 +1,6 @@
 <?php
-include 'keys.php';
+require get_theme_file_path('keys.php');
+require get_theme_file_path('/inc/search-route.php');
 //Cusomise the RESTAPI
 
 function university_custom_rest()
