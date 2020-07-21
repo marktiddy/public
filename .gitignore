@@ -21,3 +21,4 @@ node_modules/
 *.log
 *.sql
 *.sqlite
+wp-content/themes/fictional-university-theme/keys.php

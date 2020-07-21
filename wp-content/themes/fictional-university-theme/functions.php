@@ -1,5 +1,5 @@
 <?php
-
+include 'keys.php';
 //Cusomise the RESTAPI
 
 function university_custom_rest()
@@ -47,7 +47,7 @@ function university_files()
     //For JS wordpress needs to know about dependencies (null), a version and whether to load at footer
     wp_enqueue_style('custom-google-font', '//fonts.googleapis.com/css?family=Roboto+Condensed:300,300i,400,400i,700,700i|Roboto:100,300,400,400i,700,700i');
     wp_enqueue_style('font-awesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
-    wp_enqueue_script('googleMap', '//maps.googleapis.com/maps/api/js?key=AIzaSyDXs9tkZHGT-1pZygGuOEsE02bekq8Bo7k', null, '1.0', true);
+    wp_enqueue_script('googleMap', '//maps.googleapis.com/maps/api/js?key=' . $apiKey, null, '1.0', true);
 
     //This is to check if we're running it locally for webpack
     if (strstr($_SERVER['SERVER_NAME'], 'localhost')) {
@@ -126,7 +126,7 @@ add_action('pre_get_posts', 'university_adjust_queries');
 
 function universityMapKey($api)
 {
-    $api['key'] = 'AIzaSyDXs9tkZHGT-1pZygGuOEsE02bekq8Bo7k';
+    $api['key'] = $apiKey;
     return $api;
 }
 
