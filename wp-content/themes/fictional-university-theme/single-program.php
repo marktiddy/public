@@ -15,7 +15,7 @@ while (have_posts()):
 											      <span class="metabox__main"> <?php the_title();?></span></p>
 											    </div>
 											    <div class="generic-content">
-											    <?php the_content();?>
+											    <?php the_field('main_body_content');?>
 											    </div>
 											    <?php
     //Custom query to get related professors
@@ -36,7 +36,7 @@ while (have_posts()):
     if ($relatedProfessors->have_posts()):
         echo '<hr class="section-break">';
         echo '<h2 class="headline headline--medium">' . get_the_title() . ' Professors</h2>';
-        echo '<ul class="professor-cards">';
+        echo '<ul class="professor-card">';
         while ($relatedProfessors->have_posts()):
             $relatedProfessors->the_post();
             ?>

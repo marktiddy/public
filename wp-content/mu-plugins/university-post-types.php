@@ -25,7 +25,7 @@ function university_post_types() {
   //Program Post Type
   register_post_type('program',array(
     'show_in_rest'=>true,
-    'supports'=> array('title','editor'),
+    'supports'=> array('title'),
     'rewrite' => array(
       'slug'=> 'programs'
     ),
@@ -34,7 +34,7 @@ function university_post_types() {
     'labels'=> array(
       'name'=> 'Programs',
       'add_new_item' => 'Add New Program',
-      'edit_item' => 'Edit Event',
+      'edit_item' => 'Edit Program',
       'all_items'=> 'All Programs',
       'singular_name'=>'Program'
     ),
