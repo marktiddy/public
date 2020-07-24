@@ -33,6 +33,8 @@ class Search {
       this.searchField.focus();
     }, 301);
     this.isOverlayOpen = true;
+    //this prevents default behaviour of link elements so this works when JS is enabled
+    return false;
   }
 
   closeOverlay() {
