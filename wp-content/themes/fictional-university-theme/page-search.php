@@ -43,7 +43,7 @@ wp_list_pages(array(
     <?php endif;?>
 
     <div class="generic-content">
-<?php get_search_form() ?>
+    <?php get_search_form() ?>
   </div>
 
   </div>
