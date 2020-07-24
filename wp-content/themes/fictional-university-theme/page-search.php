@@ -43,10 +43,7 @@ wp_list_pages(array(
     <?php endif;?>
 
     <div class="generic-content">
-<form action="<?php echo esc_url(site_url('/')); ?>">
-<input type="search" name="s">
-<input type="submit" value="Search">
-</form>
+<?php get_search_form() ?>
   </div>
 
   </div>
