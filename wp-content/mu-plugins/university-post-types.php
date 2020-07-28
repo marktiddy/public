@@ -97,6 +97,22 @@ function university_post_types()
         ),
         'menu_icon' => 'dashicons-location-alt',
     ));
+
+    //Like feature
+    register_post_type('like', array(
+        'supports' => array('title'),
+        'public' => false,
+        'show_ui' => true,
+        'labels' => array(
+            'name' => 'Likes',
+            'add_new_item' => 'Add New Like',
+            'edit_item' => 'Edit Like',
+            'all_items' => 'All Like',
+            'singular_name' => 'Like',
+        ),
+        'menu_icon' => 'dashicons-heart',
+    ));
+
 }
 
 //Add the action
