@@ -43,8 +43,9 @@ class MyNotes {
           .slideDown();
       },
       error: (response) => {
-        console.log('sad times');
-        console.log(response);
+        if (response.responseText == 'You have reached your note limit') {
+          $('.note-limit-message').addClass('active');
+        }
       },
     });
   }
@@ -60,6 +61,10 @@ class MyNotes {
       type: 'DELETE',
       success: (response) => {
         thisNote.slideUp();
+
+        if (response.userNoteCount < 5) {
+          $('.note-limit-message').removeClass('active');
+        }
       },
       error: (response) => {
         console.log('sad times');

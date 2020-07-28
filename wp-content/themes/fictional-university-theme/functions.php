@@ -8,6 +8,12 @@ function university_custom_rest()
     register_rest_field('post', 'authorName', array(
         'get_callback' => function () {return get_the_author();},
     ));
+
+    //Adds this to the rest
+    register_rest_field('note', 'userNoteCount', array(
+        'get_callback' => function () {return count_user_posts(get_current_user_id(), 'note');},
+    ));
+
 }
 
 add_action('rest_api_init', 'university_custom_rest');
@@ -55,8 +61,8 @@ function university_files()
         wp_enqueue_script('main-university-js', 'http://localhost:3000/bundled.js', null, '1.0', true);
     } else {
         wp_enqueue_script('our-vendors-js', get_theme_file_uri('/bundled-assets/vendors~scripts.9678b4003190d41dd438.js'), null, '1.0', true);
-        wp_enqueue_script('main-university-js', get_theme_file_uri('/bundled-assets/scripts.e8b0a301c473af28c99b.js'), null, '1.0', true);
-        wp_enqueue_style('our-main-styles', get_theme_file_uri('/bundled-assets/styles.e8b0a301c473af28c99b.css'));
+        wp_enqueue_script('main-university-js', get_theme_file_uri('/bundled-assets/scripts.65c8488a00c195e67731.js'), null, '1.0', true);
+        wp_enqueue_style('our-main-styles', get_theme_file_uri('/bundled-assets/styles.65c8488a00c195e67731.css'));
     }
 
     //Function to get our url
@@ -64,7 +70,7 @@ function university_files()
 
     wp_localize_script('main-university-js', 'universityData', array(
         'root_url' => get_site_url(),
-        'nonce' => wp_create_nonce('wp_rest')
+        'nonce' => wp_create_nonce('wp_rest'),
     ));
 }
 
@@ -135,43 +141,71 @@ function universityMapKey($api)
 add_filter('acf/fields/google_map/api', 'universityMapKey');
 
 //redirect subscriber accounts onto homepage
-add_action('admin_init','redirectSubsToFrontend');
+add_action('admin_init', 'redirectSubsToFrontend');
 
-function redirectSubsToFrontend() {
+function redirectSubsToFrontend()
+{
     $ourCurrentUser = wp_get_current_user();
-    if (count($ourCurrentUser->roles) == 1 AND $ourCurrentUser->roles[0] == 'subscriber') {
+    if (count($ourCurrentUser->roles) == 1 and $ourCurrentUser->roles[0] == 'subscriber') {
         wp_redirect(site_url('/'));
         exit;
     }
 }
 
+add_action('wp_loaded', 'noSubsAdminBar');
 
-add_action('wp_loaded','noSubsAdminBar');
-
-function noSubsAdminBar() {
+function noSubsAdminBar()
+{
     $ourCurrentUser = wp_get_current_user();
-    if (count($ourCurrentUser->roles) == 1 AND $ourCurrentUser->roles[0] == 'subscriber') {
+    if (count($ourCurrentUser->roles) == 1 and $ourCurrentUser->roles[0] == 'subscriber') {
         show_admin_bar(false);
     }
 }
 
 //Function to customise login screen
 //First arg - object to change Second - Function
-add_filter('login_headerurl','ourHeaderUrl');
+add_filter('login_headerurl', 'ourHeaderUrl');
 
-
-function ourHeaderUrl() {
+function ourHeaderUrl()
+{
     return esc_url(site_url('/'));
 }
 
-add_action('login_enqueue_scripts','ourLoginCSS');
+add_action('login_enqueue_scripts', 'ourLoginCSS');
 
-function ourLoginCSS() {
-    wp_enqueue_style('our-main-styles', get_theme_file_uri('/bundled-assets/styles.e8b0a301c473af28c99b.css'));
+function ourLoginCSS()
+{
+    wp_enqueue_style('our-main-styles', get_theme_file_uri('/bundled-assets/styles.65c8488a00c195e67731.css'));
 }
 
-add_filter('login_headertitle','ourLoginTitle');
+add_filter('login_headertitle', 'ourLoginTitle');
 
-function ourLoginTitle() {
+function ourLoginTitle()
+{
     return get_bloginfo('name');
+}
+
+//Force note posts to be private, sanitize their content and limit number of posts per person
+//We add a priority (10 is default) and 2 which says it can work with 2 paramaters
+add_filter('wp_insert_post_data', 'makeNotePrivate', 10, 2);
+
+function makeNotePrivate($data, $postarr)
+{
+    //Dont alloow any html
+    if ($data['post_type'] == 'note') {
+        if (count_user_posts(get_current_user_id(), 'note') > 4 and !$postarr['ID']) {
+            die('You have reached your note limit');
+        }
+
+        $data['post_content'] = sanitize_textarea_field($data['post_content']);
+        $data['post_title'] = sanitize_text_field($data['post_title']);
+
+    }
+
+    //Only do this for notes when the status isnt trash
+    if ($data['post_type'] == 'note' and $data['post_status'] != 'trash') {
+        $data['post_status'] = 'private';
+    }
+
+    return $data;
 }
